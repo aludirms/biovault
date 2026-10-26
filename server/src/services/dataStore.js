@@ -63,6 +63,34 @@ export const dataStore = {
     return memData.users.map(({ password, ...rest }) => rest);
   },
 
+  async updateUserRole(id, role) {
+    const roleLabels = {
+      admin: "Biobank Administrator",
+      technician: "Senior Lab Technician",
+      researcher: "Principal Investigator",
+      auditor: "Quality Assurance Auditor",
+    };
+    if (getDBStatus()) {
+      try {
+        return await User.findByIdAndUpdate(
+          id,
+          { role, roleLabel: roleLabels[role] || "Lab Staff" },
+          { new: true }
+        ).select("-password");
+      } catch (err) {
+        console.error("DB error updating user role:", err);
+      }
+    }
+    const user = memData.users.find((u) => u.id === id || u._id === id);
+    if (user) {
+      user.role = role;
+      user.roleLabel = roleLabels[role] || "Lab Staff";
+      const { password, ...safeUser } = user;
+      return safeUser;
+    }
+    return null;
+  },
+
   // --- SAMPLES ---
   async getSamples({ search, type, status, riskLevel, priorityLevel, freezerId, sortBy = "createdAt", sortOrder = "desc" } = {}) {
     let list = [...memData.samples];

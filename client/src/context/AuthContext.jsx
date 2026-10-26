@@ -48,17 +48,22 @@ export const DEMO_ACCOUNTS = [
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("biovault_user");
-    return saved ? JSON.parse(saved) : DEMO_ACCOUNTS[0];
+    // Start logged out by default so the login screen is the first screen seen
+    const saved = sessionStorage.getItem("biovault_user");
+    return saved ? JSON.parse(saved) : null;
   });
-  const [token, setToken] = useState(() => localStorage.getItem("biovault_token") || "demo-token");
+  const [token, setToken] = useState(() => sessionStorage.getItem("biovault_token") || null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
+      sessionStorage.setItem("biovault_user", JSON.stringify(user));
       localStorage.setItem("biovault_user", JSON.stringify(user));
     } else {
+      sessionStorage.removeItem("biovault_user");
+      sessionStorage.removeItem("biovault_token");
       localStorage.removeItem("biovault_user");
+      localStorage.removeItem("biovault_token");
     }
   }, [user]);
 
@@ -69,6 +74,7 @@ export const AuthProvider = ({ children }) => {
       if (res.success) {
         setUser(res.user);
         setToken(res.token);
+        sessionStorage.setItem("biovault_token", res.token);
         localStorage.setItem("biovault_token", res.token);
         return { success: true };
       }
@@ -78,6 +84,8 @@ export const AuthProvider = ({ children }) => {
       if (match) {
         setUser(match);
         setToken("demo-token");
+        sessionStorage.setItem("biovault_token", "demo-token");
+        localStorage.setItem("biovault_token", "demo-token");
         return { success: true };
       }
       return { success: false, message: err.message || "Invalid credentials" };
@@ -93,6 +101,7 @@ export const AuthProvider = ({ children }) => {
       if (res.success) {
         setUser(res.user);
         setToken(res.token);
+        sessionStorage.setItem("biovault_token", res.token);
         localStorage.setItem("biovault_token", res.token);
         return { success: true };
       }
@@ -110,6 +119,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    sessionStorage.removeItem("biovault_token");
+    sessionStorage.removeItem("biovault_user");
     localStorage.removeItem("biovault_token");
     localStorage.removeItem("biovault_user");
   };

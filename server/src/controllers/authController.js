@@ -117,3 +117,17 @@ export const getAllStaff = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateUserRole = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+    const updated = await dataStore.updateUserRole(id, role);
+    if (!updated) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.json({ success: true, message: "User role updated successfully", user: updated });
+  } catch (err) {
+    next(err);
+  }
+};

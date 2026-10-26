@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   LayoutDashboard,
   Dna,
@@ -13,6 +13,7 @@ import {
   ChevronDown,
   ShieldCheck,
   Zap,
+  CalendarClock,
 } from "lucide-react";
 import { useAuth, DEMO_ACCOUNTS } from "../context/AuthContext";
 
@@ -46,6 +47,10 @@ export const Navbar = ({
       badge: activeAlertsCount > 0 ? activeAlertsCount : null,
     },
     { id: "activity", label: "Activity", icon: History },
+    { id: "expiry", label: "Expiry Watch", icon: CalendarClock },
+    ...(user?.role === "admin"
+      ? [{ id: "admin", label: "Admin Console", icon: ShieldCheck }]
+      : []),
   ];
 
   return (

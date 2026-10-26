@@ -6,6 +6,8 @@ import { StorageView } from "./views/StorageView";
 import { RequestsView } from "./views/RequestsView";
 import { AlertsView } from "./views/AlertsView";
 import { ActivityView } from "./views/ActivityView";
+import { AdminView } from "./views/AdminView";
+import { ExpiryDashboardView } from "./views/ExpiryDashboardView";
 import { LoginView } from "./views/LoginView";
 import { AddSampleModal } from "./components/AddSampleModal";
 import { NewRequestModal } from "./components/NewRequestModal";
@@ -18,7 +20,7 @@ import { api } from "./api/apiClient";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 
 export function App() {
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("dashboard");
 
   // Global Drawers & Modals
@@ -148,6 +150,43 @@ export function App() {
             initialSampleId={activitySampleId}
             onInspectSample={handleInspectSampleById}
           />
+        )}
+
+        {activeTab === "expiry" && (
+          <ExpiryDashboardView
+            onInspectSample={handleInspectSampleById}
+            onOpenNewRequest={(sample) => {
+              setRequestTargetSample(sample);
+              setIsNewRequestOpen(true);
+            }}
+            onNavigate={(tab) => setActiveTab(tab)}
+            showToast={showToast}
+          />
+        )}
+
+        {activeTab === "admin" && (
+          user?.role === "admin" ? (
+            <AdminView
+              onNavigate={(tab) => setActiveTab(tab)}
+              onInspectSample={handleInspectSampleById}
+              showToast={showToast}
+            />
+          ) : (
+            <div className="glass-panel animate-fade-in" style={{ padding: "48px 24px", textAlign: "center", maxWidth: "600px", margin: "40px auto" }}>
+              <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#e11d48", marginBottom: "8px" }}>
+                Restricted Administrative Console
+              </div>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.88rem", marginBottom: "20px" }}>
+                Your current account ({user?.roleLabel || user?.role}) does not have Level 4 Governance Clearance to access this module.
+              </p>
+              <button
+                onClick={() => setActiveTab("dashboard")}
+                className="btn btn-primary"
+              >
+                Return to Clinical Dashboard
+              </button>
+            </div>
+          )
         )}
       </main>
 

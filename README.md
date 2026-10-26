@@ -77,10 +77,10 @@ All demo accounts use the standard password: **`biovault123`**
 
 | Role | Name | Email | Clearance |
 |---|---|---|---|
-| **Biobank Administrator** | Dr. Mira Sharma | `admin@biovault.org` | Level 4 — Full Admin Console |
-| **Senior Lab Technician** | Marcus Vance | `tech@biovault.org` | Level 3 — Storage & Handling |
-| **Principal Investigator** | Dr. Priya Patel | `researcher@biovault.org` | Level 2 — Requisitions |
-| **QA Compliance Auditor** | Elena Rostova | `auditor@biovault.org` | Level 1 — Regulatory Audit |
+| **Biobank Administrator** | Admin XYZ | `admin@biovault.org` | Level 4 — Full Admin Console |
+| **Senior Lab Technician** | Technician ABC | `tech@biovault.org` | Level 3 — Storage & Handling |
+| **Principal Investigator** | Researcher PQR | `researcher@biovault.org` | Level 2 — Requisitions |
+| **QA Compliance Auditor** | Researcher PQR | `auditor@biovault.org` | Level 1 — Regulatory Audit |
 
 ---
 

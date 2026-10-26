@@ -680,7 +680,7 @@ export const AdminView = ({ onNavigate, onInspectSample, showToast }) => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Dr. Jordan Hayes"
+                  placeholder="e.g. Compliance JKL"
                   value={newStaff.name}
                   onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
                   className="glass-input"
@@ -694,7 +694,7 @@ export const AdminView = ({ onNavigate, onInspectSample, showToast }) => {
                 <input
                   type="email"
                   required
-                  placeholder="e.g. jhayes@biovault.org"
+                  placeholder="e.g. staff@biovault.org"
                   value={newStaff.email}
                   onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
                   className="glass-input"

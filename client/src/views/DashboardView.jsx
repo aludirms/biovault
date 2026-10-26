@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { StatCard } from "../components/StatCard";
 import { api } from "../api/apiClient";
+import { useAuth } from "../context/AuthContext";
 
 export const DashboardView = ({
   onOpenAddSample,
@@ -58,10 +59,65 @@ export const DashboardView = ({
   const freezers = data?.freezers || [];
   const recentActivity = data?.recentActivity || [];
   const activeAlerts = data?.activeAlerts || [];
+  const { user } = useAuth();
+  const role = user?.role || "technician";
+
+  const roleMeta = {
+    admin: {
+      title: "Biobank Governance & Operations",
+      badge: "Level 4 • Administrator Access",
+      badgeClass: "badge-critical",
+      subtitle: `Logged in as ${user?.name || "Admin XYZ"} • Managing institutional safety policies, staff clearances, and compliance.`,
+      actions: [
+        { label: "Admin Console", icon: ShieldAlert, variant: "primary", onClick: () => onNavigate("admin") },
+        { label: "Storage Units", icon: Server, variant: "secondary", onClick: () => onNavigate("storage") },
+        { label: `Excursion Alerts (${metrics.activeAlertsCount || 0})`, icon: AlertTriangle, variant: "secondary", onClick: () => onNavigate("alerts"), iconColor: "#f59e0b" },
+        { label: "Audit Ledger", icon: ClipboardList, variant: "secondary", onClick: () => onNavigate("activity") },
+      ],
+    },
+    technician: {
+      title: "Cryogenic Storage & Specimen Intake Center",
+      badge: "Level 3 • Lab Technician Access",
+      badgeClass: "badge-cyan",
+      subtitle: `Logged in as ${user?.name || "Technician ABC"} • Specimen intake, 2D barcoding, and cryogenic storage rack allocations.`,
+      actions: [
+        { label: "Register Sample", icon: Plus, variant: "primary", onClick: onOpenAddSample, stroke: 2.5 },
+        { label: "Cryo Storage Grid", icon: Server, variant: "secondary", onClick: () => onNavigate("storage") },
+        { label: `Thermal Alerts (${metrics.activeAlertsCount || 0})`, icon: AlertTriangle, variant: "secondary", onClick: () => onNavigate("alerts"), iconColor: "#f59e0b" },
+        { label: "Expiry Watch", icon: Clock, variant: "secondary", onClick: () => onNavigate("expiry") },
+      ],
+    },
+    researcher: {
+      title: "Clinical Requisitions & Research Cohort Portal",
+      badge: "Level 2 • Principal Investigator Access",
+      badgeClass: "badge-purple",
+      subtitle: `Logged in as ${user?.name || "Researcher PQR"} • Browse biological specimens, check stability horizons, and requisition vials for studies.`,
+      actions: [
+        { label: "Create Requisition", icon: ClipboardList, variant: "emerald", onClick: onOpenNewRequest },
+        { label: "Browse Specimen Inventory", icon: Dna, variant: "secondary", onClick: () => onNavigate("samples") },
+        { label: "Stability & Expiry Watch", icon: Clock, variant: "secondary", onClick: () => onNavigate("expiry") },
+        { label: "My Access Requests", icon: ArrowRight, variant: "secondary", onClick: () => onNavigate("requests") },
+      ],
+    },
+    auditor: {
+      title: "QA Audit & Regulatory Surveillance",
+      badge: "Level 1 • QA Auditor (Read-Only)",
+      badgeClass: "badge-medium",
+      subtitle: `Logged in as ${user?.name || "Compliance JKL"} • Tamper-evident 21 CFR Part 11 audit trails, chain-of-custody tracking, and incident logging.`,
+      actions: [
+        { label: "Review Audit Trail", icon: ClipboardList, variant: "primary", onClick: () => onNavigate("activity") },
+        { label: "Specimen Ledger", icon: Dna, variant: "secondary", onClick: () => onNavigate("samples") },
+        { label: `Recorded Excursions (${metrics.activeAlertsCount || 0})`, icon: AlertTriangle, variant: "secondary", onClick: () => onNavigate("alerts"), iconColor: "#f59e0b" },
+        { label: "Expiry Forecaster", icon: Clock, variant: "secondary", onClick: () => onNavigate("expiry") },
+      ],
+    },
+  };
+
+  const currentRoleMeta = roleMeta[role] || roleMeta.technician;
 
   return (
     <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      {/* Top Banner / Welcome & Quick Action Bar */}
+      {/* Top Banner / Welcome & Role-Specific Action Bar */}
       <div
         className="glass-panel"
         style={{
@@ -72,39 +128,49 @@ export const DashboardView = ({
           flexWrap: "wrap",
           gap: "16px",
           background: "linear-gradient(135deg, rgba(240, 244, 248, 0.95) 0%, rgba(232, 237, 245, 0.98) 100%)",
+          borderLeft:
+            role === "admin"
+              ? "4px solid var(--cryo-cyan)"
+              : role === "researcher"
+              ? "4px solid #10b981"
+              : role === "technician"
+              ? "4px solid #0099c8"
+              : "4px solid #7c3aed",
         }}
       >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <h1 style={{ fontSize: "1.5rem", fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
-              Biobank Operational Center
-            </h1>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
+            <span className={`badge ${currentRoleMeta.badgeClass}`} style={{ fontSize: "0.7rem", padding: "2px 8px" }}>
+              {currentRoleMeta.badge}
+            </span>
             <span className="status-dot status-dot-emerald" />
-            <span style={{ fontSize: "0.75rem", color: "#34d399", fontWeight: 700 }}>LIVE TELEMETRY</span>
+            <span style={{ fontSize: "0.75rem", color: "#059669", fontWeight: 700 }}>LIVE TELEMETRY</span>
           </div>
-          <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "4px" }}>
-            Real-time specimen inventory, cryogenic storage telemetry, and chain-of-custody tracking.
+          <h1 style={{ fontSize: "1.45rem", fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
+            {currentRoleMeta.title}
+          </h1>
+          <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "3px" }}>
+            {currentRoleMeta.subtitle}
           </p>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions (Strictly Role-Based) */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-          <button className="btn btn-primary" onClick={onOpenAddSample}>
-            <Plus size={16} strokeWidth={2.5} />
-            <span>Register Sample</span>
-          </button>
-          <button className="btn btn-secondary" onClick={onOpenNewRequest}>
-            <ClipboardList size={16} />
-            <span>Create Request</span>
-          </button>
-          <button className="btn btn-secondary" onClick={() => onNavigate("storage")}>
-            <Server size={16} />
-            <span>View Storage</span>
-          </button>
-          <button className="btn btn-secondary" onClick={() => onNavigate("alerts")}>
-            <AlertTriangle size={16} color="#f59e0b" />
-            <span>View Alerts ({metrics.activeAlertsCount || 0})</span>
-          </button>
+          {currentRoleMeta.actions.map((act, idx) => {
+            const Icon = act.icon;
+            const btnClass =
+              act.variant === "emerald"
+                ? "btn btn-emerald"
+                : act.variant === "primary"
+                ? "btn btn-primary"
+                : "btn btn-secondary";
+            return (
+              <button key={idx} className={btnClass} onClick={act.onClick}>
+                <Icon size={16} color={act.iconColor} strokeWidth={act.stroke || 2} />
+                <span>{act.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

@@ -21,6 +21,7 @@ export const Navbar = ({
   activeTab,
   setActiveTab,
   onOpenAddSample,
+  onOpenNewRequest,
   activeAlertsCount = 0,
   onQuickSearch,
 }) => {
@@ -241,19 +242,70 @@ export const Navbar = ({
             />
           </form>
 
-          {/* Quick Add Sample Button */}
-          <button
-            className="btn btn-primary"
-            onClick={onOpenAddSample}
-            style={{
-              padding: "7px 14px",
-              fontSize: "0.82rem",
-              height: "34px",
-            }}
-          >
-            <Plus size={15} strokeWidth={2.5} />
-            <span>Add Sample</span>
-          </button>
+          {/* Role-Specific Quick Action Button */}
+          {user?.role === "technician" && (
+            <button
+              className="btn btn-primary"
+              onClick={onOpenAddSample}
+              style={{
+                padding: "7px 14px",
+                fontSize: "0.82rem",
+                height: "34px",
+              }}
+              title="Technician: Register new incoming specimen"
+            >
+              <Plus size={15} strokeWidth={2.5} />
+              <span>Register Sample</span>
+            </button>
+          )}
+
+          {user?.role === "researcher" && (
+            <button
+              className="btn btn-emerald"
+              onClick={onOpenNewRequest}
+              style={{
+                padding: "7px 14px",
+                fontSize: "0.82rem",
+                height: "34px",
+              }}
+              title="Researcher: Submit sample access requisition"
+            >
+              <ClipboardList size={15} />
+              <span>New Requisition</span>
+            </button>
+          )}
+
+          {user?.role === "admin" && (
+            <button
+              className="btn btn-primary"
+              onClick={() => setActiveTab("admin")}
+              style={{
+                padding: "7px 14px",
+                fontSize: "0.82rem",
+                height: "34px",
+              }}
+              title="Admin: Open Governance Console"
+            >
+              <ShieldCheck size={15} />
+              <span>Admin Console</span>
+            </button>
+          )}
+
+          {user?.role === "auditor" && (
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab("activity")}
+              style={{
+                padding: "7px 14px",
+                fontSize: "0.82rem",
+                height: "34px",
+              }}
+              title="Auditor: View regulatory audit trail"
+            >
+              <History size={15} />
+              <span>Audit Trail</span>
+            </button>
+          )}
 
           {/* User Profile Pill & Dropdown */}
           <div style={{ position: "relative" }}>

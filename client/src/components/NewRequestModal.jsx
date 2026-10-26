@@ -13,7 +13,7 @@ export const NewRequestModal = ({ preselectedSample, onClose, onRequestCreated }
   const [formData, setFormData] = useState({
     sampleId: preselectedSample?.sampleId || "",
     sampleType: preselectedSample?.type || "",
-    requesterName: user?.name || "Dr. Elena Rostova",
+    requesterName: user?.name || "Researcher PQR",
     requesterEmail: user?.email || "researcher@biovault.org",
     department: user?.department || "Oncology Precision Therapeutics",
     studyPurpose: "Transcriptomic Profiling & NGS Target Validation",

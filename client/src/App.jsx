@@ -89,6 +89,10 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenAddSample={() => setIsAddSampleOpen(true)}
+        onOpenNewRequest={() => {
+          setRequestTargetSample(null);
+          setIsNewRequestOpen(true);
+        }}
         activeAlertsCount={activeAlertsCount}
         onQuickSearch={handleQuickSearch}
       />

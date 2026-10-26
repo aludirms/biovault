@@ -29,7 +29,7 @@ export const requireAuth = async (req, res, next) => {
       // Allow fallback default user if header is not present for smooth API testing
       req.user = {
         id: "usr-001",
-        name: "Dr. Mira Sharma",
+        name: "Admin XYZ",
         email: "admin@biovault.org",
         role: "admin",
         roleLabel: "Biobank Administrator",

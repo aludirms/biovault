@@ -470,7 +470,7 @@ export const SampleDetailsDrawer = ({
               color: "var(--text-muted)",
             }}
           >
-            <span>Registered By: <strong style={{ color: "var(--text-primary)" }}>{sample.registeredBy || "Marcus Vance"}</strong></span>
+            <span>Registered By: <strong style={{ color: "var(--text-primary)" }}>{sample.registeredBy || "Technician ABC"}</strong></span>
             <span>Created: {new Date(sample.createdAt).toLocaleDateString()}</span>
           </div>
 
